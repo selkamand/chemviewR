@@ -34,7 +34,7 @@ plotrgl(
 \item{bonds}{Data frame of bonds with two columns that reference atom IDs:
 origin (given by \code{col_bond_origin}) and target (given by \code{col_bond_target}).}
 
-\item{col_bond_origin, }{col_bond_target Character scalars naming the bond
+\item{col_bond_origin, col_bond_target}{Character scalars naming the bond
 columns that reference atom IDs.}
 
 \item{col_atom_id}{Character scalar naming the atom ID column in \code{atoms}.}
@@ -55,6 +55,8 @@ Defaults to \code{col_atom_name}, which is mapped via \code{colour_map_atom}.}
 
 \item{colour_map_atom}{Named character vector mapping element/name → colour
 (e.g., Jmol-style colours). Used by \code{prepare_atoms_for_plotting()}.}
+
+\item{missing}{colour of atoms that are not found in colour map}
 
 \item{strip_numbers}{Logical; if \code{TRUE}, digits are stripped from \code{col_atom_name}
 before colour lookup (useful for labels like \code{"C12"} → \code{"C"}).}
@@ -107,9 +109,4 @@ plotrgl(
 )
 }
 
-}
-\seealso{
-\code{\link[=to_interleaved]{to_interleaved()}}, \code{\link[=enrich_bonds_with_xyz_position]{enrich_bonds_with_xyz_position()}},
-\code{\link[=prepare_atoms_for_plotting]{prepare_atoms_for_plotting()}}, and the \strong{rgl} functions
-\code{\link[rgl:spheres]{rgl::spheres3d()}}, \code{\link[rgl:primitives]{rgl::segments3d()}}, \code{\link[rgl:axes3d]{rgl::axes3d()}}, \code{\link[rgl:grid3d]{rgl::grid3d()}}.
 }

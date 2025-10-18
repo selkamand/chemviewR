@@ -8,7 +8,7 @@
 #'   (given by `col_atom_id`), and a name/element column (given by `col_atom_name`).
 #' @param bonds Data frame of bonds with two columns that reference atom IDs:
 #'   origin (given by `col_bond_origin`) and target (given by `col_bond_target`).
-#' @param col_bond_origin, col_bond_target Character scalars naming the bond
+#' @param col_bond_origin,col_bond_target Character scalars naming the bond
 #'   columns that reference atom IDs.
 #' @param col_atom_id Character scalar naming the atom ID column in `atoms`.
 #' @param col_atom_name Character scalar naming the atom element/name column in `atoms`.
@@ -24,6 +24,7 @@
 #'   (e.g., Jmol-style colours). Used by `prepare_atoms_for_plotting()`.
 #' @param strip_numbers Logical; if `TRUE`, digits are stripped from `col_atom_name`
 #'   before colour lookup (useful for labels like `"C12"` → `"C"`).
+#' @param missing colour of atoms that are not found in colour map
 #' @param bond_width Numeric line width for bonds.
 #' @param axes Logical; draw labelled axes box if `TRUE`.
 #' @param bg3d Background colour passed to `rgl::bg3d()`. **Note:** current
@@ -60,9 +61,6 @@
 #' )
 #' }
 #'
-#' @seealso [to_interleaved()], [enrich_bonds_with_xyz_position()],
-#'   [prepare_atoms_for_plotting()], and the **rgl** functions
-#'   [rgl::spheres3d()], [rgl::segments3d()], [rgl::axes3d()], [rgl::grid3d()].
 #' @export
 plotrgl <- function(
     atoms,
