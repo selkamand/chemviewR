@@ -65,6 +65,5 @@ fe_tripod_bonds = fe_tripod$bond
 
 plotrgl(fe_tripod_atoms, fe_tripod_bonds, axes = FALSE)
 rgl::rglwidget()
-
 ```
 

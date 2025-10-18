@@ -144,6 +144,24 @@ plotrgl <- function(
 # }
 
 # Still need to figure out how to move arrow based on offset
+
+#' Add a plane and optional normal arrows to an rgl scene
+#'
+#' Draws a plane defined by a normal vector and offset using `rgl::planes3d()`,
+#' with optional visualisation of the plane's normal via `rgl::arrow3d()`.
+#'
+#' @param normal Numeric length-3 vector giving the plane's normal direction.
+#' @param offset Numeric scalar giving the plane's offset (distance from the origin
+#'   along the normal).
+#' @param color Colour of the plane surface and normal arrows.
+#' @param lit Logical; if `TRUE`, the plane and arrows are affected by scene lighting.
+#' @param alpha Numeric in `[0, 1]` giving plane transparency.
+#' @param show_normal Logical; if `TRUE`, draws one or more arrows indicating
+#'   the plane normal direction.
+#'
+#' @return Called for side effects; returns `NULL` invisibly.
+#' @seealso [add_plane_by_position_and_normal()]
+#' @export
 add_plane <- function(normal, offset=0, color="pink", lit=FALSE, alpha = 0.5, show_normal = TRUE){
   stopifnot(length(normal) == 3)
   nlen <- sqrt(sum(normal^2))
@@ -170,12 +188,17 @@ add_plane <- function(normal, offset=0, color="pink", lit=FALSE, alpha = 0.5, sh
   rgl::planes3d(normal, d = offset, p1 = normal, lit = lit, color = color, alpha = alpha)
 }
 
-# Need to
-compute_offset_for_plane_by_position <- function(plane_normal, target){
-  # -sqrt(sum(target^2))
-  -(plane_normal %*% target)/magnitude(plane_normal)
-}
 
+#' Add a plane defined by position and normal
+#'
+#' Computes the plane offset from a point and normal, then draws it with
+#' [add_plane()].
+#'
+#' @param plane_normal Numeric length-3 vector giving the plane normal.
+#' @param plane_position Numeric length-3 vector specifying a point on the plane.
+#' @return Called for side effects; returns `NULL` invisibly.
+#' @seealso [add_plane()]
+#' @export
 add_plane_by_position_and_normal <- function(plane_normal, plane_position){
   plane_normal <- normalise(plane_normal)
   # rgl::arrow3d(p0=plane_position, p1=plane_position + plane_normal, lit=FALSE, color = "green", type="rotation")
@@ -183,6 +206,13 @@ add_plane_by_position_and_normal <- function(plane_normal, plane_position){
 
   add_plane(plane_normal, offset=offset, color = "orange")
   # rgl::spheres3d(x = plane_position, lit=FALSE, color = "purple", radius=0.1)
+}
+
+
+
+compute_offset_for_plane_by_position <- function(plane_normal, target){
+  # -sqrt(sum(target^2))
+  -(plane_normal %*% target)/magnitude(plane_normal)
 }
 
 
