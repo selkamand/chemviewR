@@ -1,3 +1,30 @@
+#' Enrich bond data with atom coordinates
+#'
+#' Joins atomic coordinate columns (`x`, `y`, `z`) to a bond table so that each
+#' bond row includes both start (`x`, `y`, `z`) and end (`xend`, `yend`, `zend`)
+#' positions corresponding to its origin and target atoms.
+#'
+#' @param bonds Data frame of bonds containing columns that reference atom IDs.
+#' @param atoms Data frame of atoms containing coordinates `x`, `y`, `z` and an
+#'   atom identifier column.
+#' @param origin Name of the column in `bonds` giving the origin atom ID.
+#' @param target Name of the column in `bonds` giving the target atom ID.
+#' @param atom_id Name of the column in `atoms` giving the atom ID used to match
+#'   against `origin` and `target`.
+#'
+#' @return A data frame identical to `bonds` but with six additional coordinate
+#'   columns: `x`, `y`, `z` (for origin atoms) and `xend`, `yend`, `zend` (for
+#'   target atoms).
+#'
+#' @examples
+#' atoms <- data.frame(
+#'   eleno = 1:2,
+#'   x = c(0, 1), y = c(0, 1), z = c(0, 1)
+#' )
+#' bonds <- data.frame(origin = 1, target = 2)
+#' enrich_bonds_with_xyz_position(bonds, atoms)
+#'
+#' @export
 enrich_bonds_with_xyz_position <- function(bonds, atoms, origin = "origin", target = "target", atom_id = "eleno") {
   df_atoms_minimal <- atoms[, c(atom_id, "x", "y", "z"), drop = FALSE]
   df_atoms_minimal_end <- df_atoms_minimal
