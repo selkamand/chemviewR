@@ -73,7 +73,7 @@ plotrgl <- function(
     highlight_colour = "pink",
     col_atom_colour = col_atom_name,
     clear_scene = TRUE,
-    colour_map_atom = element_colours,
+    colour_map_atom = pal_atoms(),
     missing = "grey",
     strip_numbers = TRUE,
     bond_width = 2,

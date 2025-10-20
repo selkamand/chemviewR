@@ -3,4 +3,5 @@
 export(add_plane)
 export(add_plane_by_position_and_normal)
 export(enrich_bonds_with_xyz_position)
+export(pal_atoms)
 export(plotrgl)

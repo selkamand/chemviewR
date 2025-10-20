@@ -36,7 +36,7 @@ enrich_bonds_with_xyz_position <- function(bonds, atoms, origin = "origin", targ
 }
 
 
-prepare_atoms_for_plotting <- function(atoms, col_name, col_id, colour_map = element_colours, missing = "black", strip_numbers = TRUE, highlight = NULL, highlight_colour = "pink") {
+prepare_atoms_for_plotting <- function(atoms, col_name, col_id, colour_map = pal_atoms(), missing = "black", strip_numbers = TRUE, highlight = NULL, highlight_colour = "pink") {
   atom_names <- atoms[[col_name]]
   atom_ids <- atoms[[col_id]]
   if(strip_numbers){
@@ -94,47 +94,7 @@ to_interleaved <- function(df, coord = c("x", "y", "z"), end_suffix = "end") {
   out
 }
 
-# pal_elements <- function(){
-#   # Common element colours (Jmol convention, with quoted names)
-#   element_colours <- c(
-#     "H"  = "#FFFFFF",  # White
-#     "C"  = "#909090",  # Grey
-#     "N"  = "#3050F8",  # Blue
-#     "O"  = "#FF0D0D",  # Red
-#     "F"  = "#90E050",  # Green
-#     "Cl" = "#1FF01F",  # Green
-#     "Br" = "#A62929",  # Dark red
-#     "I"  = "#940094",  # Violet
-#     "He" = "#D9FFFF",  # Cyan
-#     "Ne" = "#B3E3F5",  # Light blue
-#     "Ar" = "#80D1E3",  # Light cyan
-#     "Xe" = "#94FFFF",  # Pale blue
-#     "Kr" = "#5CB8D1",  # Light blue
-#     "P"  = "#FF8000",  # Orange
-#     "S"  = "#FFFF30",  # Yellow
-#     "B"  = "#FFB5B5",  # Pink
-#     "Li" = "#CC80FF",  # Purple
-#     "Na" = "#AB5CF2",  # Purple
-#     "K"  = "#8F40D4",  # Violet
-#     "Ca" = "#3DFF00",  # Green
-#     "Fe" = "#E06633",  # Brownish orange
-#     "Zn" = "#7D80B0",  # Blue-grey
-#     "Cu" = "#C88033",  # Orange
-#     "Ni" = "#50D050",  # Green
-#     "Mg" = "#8AFF00",  # Light green
-#     "Al" = "#BFA6A6",  # Light grey
-#     "Si" = "#F0C8A0",  # Tan
-#     "Mn" = "#9C7AC7",  # Purple
-#     "Cr" = "#8A99C7",  # Blue-grey
-#     "Co" = "#F090A0",  # Pink-red
-#     "Se" = "#FFA100",  # Orange
-#     "Ti" = "#BFC2C7",  # Silver
-#     "Au" = "#FFD123",  # Gold
-#     "Hg" = "#B8B8D0",  # Silver-blue
-#     "Pb" = "#575961"   # Dark grey
-#   )
-#   return(element_colours)
-# }
+
 
 normalise <- function(x){x / sqrt(sum(x^2))}
 
