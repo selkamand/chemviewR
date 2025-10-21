@@ -1,48 +1,72 @@
 #' Plot atoms and bonds in 3D with rgl
 #'
-#' Renders a simple ball–stick scene from atom and bond tables using **rgl**.
-#' Each atom is drawn as a sphere, and each bond as a segment connecting the
-#' referenced atom coordinates.
+#' Renders a ball–stick scene from atom and bond tables using **rgl**.
+#' Each atom is drawn as a sphere and each bond as a segment connecting
+#' referenced atom coordinates. Labels can be drawn with different display
+#' modes via `label_mode`.
 #'
-#' @param atoms Data frame of atoms with columns `x`, `y`, `z`, an ID column
-#'   (given by `col_atom_id`), and a name/element column (given by `col_atom_name`).
+#' @param atoms Data frame of atoms with numeric columns `x`, `y`, `z`, an ID
+#'   column (named by `col_atom_id`), and a name/element column (named by
+#'   `col_atom_name`).
 #' @param bonds Data frame of bonds with two columns that reference atom IDs:
-#'   origin (given by `col_bond_origin`) and target (given by `col_bond_target`).
-#' @param col_bond_origin,col_bond_target Character scalars naming the bond
-#'   columns that reference atom IDs.
+#'   origin (named by `col_bond_origin`) and target (named by `col_bond_target`).
 #' @param col_atom_id Character scalar naming the atom ID column in `atoms`.
-#' @param col_atom_name Character scalar naming the atom element/name column in `atoms`.
+#' @param col_atom_name Character scalar naming the atom element/name column
+#'   in `atoms`.
 #' @param highlight Optional selection of atoms to highlight. Supply values of
 #'   `col_atom_id` (e.g., numeric IDs) or a logical vector aligned with `atoms`.
-#'   When provided, these atoms are drawn using `highlight_colour`.
-#' @param highlight_colour Single colour used for atoms in `highlight`; overrides
-#'   the normal colour mapping for those atoms (default: `"pink"`).
-#' @param col_atom_colour Column name or vector used to assign atom colours.
-#'   Defaults to `col_atom_name`, which is mapped via `colour_map_atom`.
+#'   When provided, these atoms are colored using `highlight_colour`.
+#' @param highlight_colour Single color used for atoms in `highlight`; overrides
+#'   the normal color mapping for those atoms (default: `"pink"`).
+#' @param col_atom_colour Column name (in `atoms`) or a vector used to assign
+#'   atom colors. Defaults to `col_atom_name`, which is mapped via
+#'   `colour_map_atom`.
 #' @param clear_scene Logical; if `TRUE`, clears the existing rgl scene first.
-#' @param colour_map_atom Named character vector mapping element/name → colour
-#'   (e.g., Jmol-style colours). Used by `prepare_atoms_for_plotting()`.
-#' @param strip_numbers Logical; if `TRUE`, digits are stripped from `col_atom_name`
-#'   before colour lookup (useful for labels like `"C12"` → `"C"`).
-#' @param missing colour of atoms that are not found in colour map
+#' @param colour_map_atom Named character vector mapping element/name → color
+#'   (e.g., Jmol-style colors). Used by `prepare_atoms_for_plotting()`.
+#' @param strip_numbers Logical; if `TRUE`, digits are stripped from the
+#'   `col_atom_name` values before color lookup (useful for labels like `"C12"` → `"C"`).
+#' @param missing Color to use for atoms not found in `colour_map_atom`.
 #' @param bond_width Numeric line width for bonds.
-#' @param axes Logical; draw labelled axes box if `TRUE`.
-#' @param bg3d Background colour passed to `rgl::bg3d()`. **Note:** current
-#'   implementation sets black unconditionally.
-#' @param colour_axis Axis and label colour.
+#' @param axes Logical; draw labeled axes box if `TRUE`.
+#' @param colour_axis Axis and label color.
+#' @param label_mode One of `c("none", "no_atoms", "transparent")`. Controls
+#'   how labels and atoms are displayed:
+#'   - `"none"`: draw atoms (opaque by default) and no labels;
+#'   - `"no_atoms"`: draw only labels (no atom spheres);
+#'   - `"transparent"`: draw labels and semi-transparent atoms (see
+#'     `atom_alpha_when_labelled` and `atom_shininess`).
+#' @param col_label Column name (in `atoms`) whose values are shown as labels
+#'   when `label_mode != "none"`. Defaults to `col_atom_name`.
+#' @param atom_alpha Atom opacity when `label_mode` is not `"transparent"`.
+#' @param atom_alpha_when_labelled Atom opacity used when `label_mode = "transparent"`.
+#' @param atom_radius Sphere radius used for atoms.
+#' @param atom_shininess Numeric shininess for atom spheres; forcibly set to `0` for a
+#'   flat (non-specular) look when `label_mode = "transparent"`.
 #' @param grid Logical; draw orthogonal reference grids if `TRUE`.
 #' @param grid_n Integer; number of grid lines per drawn axis when `grid = TRUE`.
-#' @param aspect Numeric length-3 vector for aspect ratio. **Note:** not used yet.
+#' @param aspect Numeric length-3 vector for aspect ratio (currently not used).
+#' @param col_bond_origin Name of column in bonds datatframe describing the atom_id of the first element involved in bond
+#' @param col_bond_target Name of column in bonds datatframe describing the atom_id of the second element involved in bond
+#' @param colour_bg Colour of scene background
+#' @param label_cex Label character expansion value.
+#' @param label_colour colour of atom labels
+#' @param bond_alpha Opacity of bond segments.
 #'
 #' @details
-#' Internally, bonds are enriched with atom coordinates via
+#' Bonds are enriched with atom coordinates via
 #' `enrich_bonds_with_xyz_position()` and converted to an interleaved start/end
 #' format by `to_interleaved()` (columns `x,y,z` and `xend,yend,zend` become
-#' alternating rows suitable for `rgl::segments3d()`).
+#' alternating rows suitable for [rgl::segments3d()]).
 #'
-#' @return Called for its side effects (renders to the rgl device); Returns a list of 2 vectors.
-#' 1. 'atoms': object id of atom spheres. 2. A 'bonds' vector: rgj object ids of bond segments.
+#' Labels are drawn at the atom coordinates using [rgl::texts3d()]. Depth test
+#' is disabled for labels to ensure visibility over spheres (see code comments).
 #'
+#' @return (Invisibly) a list with two elements:
+#' \describe{
+#'   \item{atoms}{Vector of RGL object IDs for atom spheres (or `NULL` if none).}
+#'   \item{bonds}{Vector of RGL object IDs for bond segments.}
+#' }
 #'
 #' @examples
 #' \dontrun{
@@ -59,10 +83,12 @@
 #'   col_atom_id = "eleno",
 #'   col_atom_name = "elena",
 #'   bond_width = 3,
-#'   axes = TRUE, grid = TRUE
+#'   axes = TRUE, grid = TRUE,
+#'   label_mode = "transparent"
 #' )
 #' }
 #'
+#' @seealso prepare_atoms_for_plotting, enrich_bonds_with_xyz_position, to_interleaved
 #' @export
 plotrgl <- function(
     atoms,
@@ -80,74 +106,141 @@ plotrgl <- function(
     strip_numbers = TRUE,
     bond_width = 2,
     axes = TRUE,
-    bg3d = "black",
+    colour_bg = "black",
     colour_axis = "red",
+    label_mode = c("none", "no_atoms", "transparent"),
+    col_label = col_atom_name,
+    label_cex = 1,
+    label_colour = "#F0F8E6",
+    atom_alpha = 1,
+    atom_alpha_when_labelled = 0.1,
+    atom_radius = 0.3,
+    atom_shininess = 100,
+    bond_alpha = 1,
     grid = FALSE,
     grid_n = 10,
-    aspect=c(1,1,1)
-  ) {
-  # Assertions
+    aspect = c(1, 1, 1)
+) {
+  # ---- Validate inputs -------------------------------------------------------
   assertions::assert_dataframe(atoms)
   assertions::assert_dataframe(bonds)
-  assertions::assert_names_include(atoms, names = c(col_atom_id, col_atom_name, "x", "y", "z"))
-  assertions::assert_names_include(bonds, names = c(col_bond_origin, col_bond_target))
+  assertions::assert_names_include(
+    atoms, names = c(col_atom_id, col_atom_name, "x", "y", "z")
+  )
+  assertions::assert_names_include(
+    bonds, names = c(col_bond_origin, col_bond_target)
+  )
+  label_mode <- rlang::arg_match(label_mode)
 
-  # Add start/end positions to bonds dataframe
-  bonds_enriched <- enrich_bonds_with_xyz_position(bonds, atoms, origin = col_bond_origin, target = col_bond_target, atom_id = col_atom_id)
-
-  # Interleave Bonds (rgl requires that segments are defined by xyz columns and 2 neighbouring rows are taken as start and end of each segment
+  # ---- Prepare bonds: attach coordinates and interleave for segments3d -------
+  bonds_enriched <- enrich_bonds_with_xyz_position(
+    bonds, atoms,
+    origin = col_bond_origin, target = col_bond_target, atom_id = col_atom_id
+  )
+  # rgl::segments3d uses alternating rows as start/end of each segment
   bonds_interleaved <- to_interleaved(bonds_enriched)
 
-  # Add '..colour' column describing colour
-  atoms_enriched <- prepare_atoms_for_plotting(atoms = atoms, col_name = col_atom_colour, col_id = col_atom_id, colour_map = colour_map_atom, strip_numbers = strip_numbers, highlight=highlight, highlight_colour = highlight_colour, missing=missing)
+  # ---- Prepare atoms: compute per-atom color column '..colour' ---------------
+  atoms_enriched <- prepare_atoms_for_plotting(
+    atoms = atoms,
+    col_name = col_atom_colour,
+    col_id = col_atom_id,
+    colour_map = colour_map_atom,
+    strip_numbers = strip_numbers,
+    highlight = highlight,
+    highlight_colour = highlight_colour,
+    missing = missing
+  )
 
-  # Open new window
-  # rgl::open3d()
-  if(clear_scene){
+  # ---- Scene setup -----------------------------------------------------------
+  if (clear_scene) {
     rgl::clear3d(type = "all")
   }
 
-  rgl::bg3d(color = "black")
+  rgl::bg3d(color = colour_bg)
   rgl::light3d(specular = "white", diffuse = "white", ambient = "gray20")
 
+  # ---- Draw atoms (or not), depending on label_mode --------------------------
+  # - "none":        draw opaque (or user-specified) atoms only
+  # - "no_atoms":    skip spheres, labels only
+  # - "transparent": draw spheres with reduced alpha and zero shininess
+  if (label_mode != "no_atoms") {
+    alpha <- if (label_mode == "transparent") atom_alpha_when_labelled else atom_alpha
+    shininess <- if (label_mode == "transparent") 0 else atom_shininess
 
-  # Draw atoms (1 at a time so they each get a different object ID (allows us to change material properties later)
-  sphere_ids <- with(atoms_enriched, {
-    rgl::spheres3d(x = x, y = y, z = z, color=..colour, radius=0.3, lit=TRUE,  shininess = 10, alpha = 1)
-  })
-
-  bond_ids <- with(bonds_interleaved, {
-    rgl::segments3d(x = x, y = y, z = z, add=TRUE, color = "grey", lwd = bond_width, lit=FALSE)
-  })
-
-
-  if(axes){
-    rgl::axes3d(
-      label=TRUE,
-      box=TRUE,
-      nticks = 5,
-      expand = 2,
-      color = colour_axis,
-      lit=FALSE,
+    # Spheres are drawn in one call for efficiency.
+    sphere_ids <- with(
+      atoms_enriched,
+      rgl::spheres3d(
+        x = x, y = y, z = z,
+        color = ..colour,
+        radius = atom_radius,
+        lit = TRUE,
+        shininess = shininess,
+        alpha = alpha
+      )
     )
-    rgl::title3d(xlab = "X", ylab = "Y", zlab = "Z", color=colour_axis)
+  } else {
+    sphere_ids <- NULL
   }
 
-  #rgl::aspect3d(1,1,1)
-  # Add reference grid
-  if(grid){
-    rgl::grid3d(c("x", "y+", "z+"), n=grid_n)
+  # ---- Draw labels depending on label_mode -----------------------------------
+  if (label_mode != "none") {
+    labels <- atoms_enriched[[col_label]]
+
+    # Draw labels at atom positions. We give them an emissive color to "pop"
+    # and disable depth test/writes so they stay visible over spheres.
+    label_id <- with(
+      atoms_enriched,
+      rgl::texts3d(
+        x, y, z,
+        texts = labels,
+        color = label_colour,
+        emission = "white",
+        specular = "white",
+        lit = FALSE,
+        shininess=1,
+        alpha = 1,
+        depth_test = "always",
+        depth_mask = FALSE,
+        cex = label_cex
+      )
+    )
   }
 
-  rgl_ids <- list("atoms" = sphere_ids, "bonds" = bond_ids)
-  return(invisible(rgl_ids))
+  # ---- Draw bonds ------------------------------------------------------------
+  bond_ids <- with(
+    bonds_interleaved,
+    rgl::segments3d(
+      x = x, y = y, z = z,
+      add = TRUE,
+      color = "grey",
+      lwd = bond_width,
+      lit = FALSE,
+      alpha = bond_alpha
+    )
+  )
+
+  # ---- Axes and optional grids ----------------------------------------------
+  if (axes) {
+    rgl::axes3d(
+      label = TRUE, box = TRUE, nticks = 5, expand = 2,
+      color = colour_axis, lit = FALSE
+    )
+    rgl::title3d(xlab = "X", ylab = "Y", zlab = "Z", color = colour_axis)
+  }
+
+  # if (!missing(aspect)) rgl::aspect3d(aspect[1], aspect[2], aspect[3]) # reserved
+  if (grid) {
+    rgl::grid3d(c("x", "y+", "z+"), n = grid_n)
+  }
+
+  # ---- Return IDs for downstream updates ------------------------------------
+  rgl_ids <- list(atoms = sphere_ids, bonds = bond_ids)
+  invisible(rgl_ids)
 }
 
-# add_cube <- function(){
-#   rgl::translate3d(rgl::cube3d(col = "green"), 3, 0, 0, lit=FALSE)
-# }
 
-# Still need to figure out how to move arrow based on offset
 
 #' Add a plane and optional normal arrows to an rgl scene
 #'
