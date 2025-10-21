@@ -40,7 +40,9 @@
 #' format by `to_interleaved()` (columns `x,y,z` and `xend,yend,zend` become
 #' alternating rows suitable for `rgl::segments3d()`).
 #'
-#' @return Called for its side effects (renders to the rgl device); returns `NULL` invisibly.
+#' @return Called for its side effects (renders to the rgl device); Returns a list of 2 vectors.
+#' 1. 'atoms': object id of atom spheres. 2. A 'bonds' vector: rgj object ids of bond segments.
+#'
 #'
 #' @examples
 #' \dontrun{
@@ -108,13 +110,14 @@ plotrgl <- function(
   rgl::bg3d(color = "black")
   rgl::light3d(specular = "white", diffuse = "white", ambient = "gray20")
 
-  with(atoms_enriched, {
+
+  # Draw atoms (1 at a time so they each get a different object ID (allows us to change material properties later)
+  sphere_ids <- with(atoms_enriched, {
     rgl::spheres3d(x = x, y = y, z = z, color=..colour, radius=0.3, lit=TRUE,  shininess = 10, alpha = 1)
   })
 
-  with(bonds_interleaved, {
+  bond_ids <- with(bonds_interleaved, {
     rgl::segments3d(x = x, y = y, z = z, add=TRUE, color = "grey", lwd = bond_width, lit=FALSE)
-    # rgl::cylinder3d(radius = 0.1, center = )
   })
 
 
@@ -135,6 +138,9 @@ plotrgl <- function(
   if(grid){
     rgl::grid3d(c("x", "y+", "z+"), n=grid_n)
   }
+
+  rgl_ids <- list("atoms" = sphere_ids, "bonds" = bond_ids)
+  return(invisible(rgl_ids))
 }
 
 # add_cube <- function(){

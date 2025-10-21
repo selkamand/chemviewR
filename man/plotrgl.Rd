@@ -77,7 +77,10 @@ implementation sets black unconditionally.}
 \item{aspect}{Numeric length-3 vector for aspect ratio. \strong{Note:} not used yet.}
 }
 \value{
-Called for its side effects (renders to the rgl device); returns \code{NULL} invisibly.
+Called for its side effects (renders to the rgl device); Returns a list of 2 vectors.
+\enumerate{
+\item 'atoms': object id of atom spheres. 2. A 'bonds' vector: rgj object ids of bond segments.
+}
 }
 \description{
 Renders a simple ball–stick scene from atom and bond tables using \strong{rgl}.
