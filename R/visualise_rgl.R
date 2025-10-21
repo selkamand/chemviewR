@@ -52,6 +52,9 @@
 #' @param label_cex Label character expansion value.
 #' @param label_colour colour of atom labels
 #' @param bond_alpha Opacity of bond segments.
+#' @param userMatrix a user matrix representing camera position structure should be viewed from. Its common to manually find a good camera position
+#' then fetch this variable from the current plot with \code{rgl::par3d("userMatrix")}.
+#' The plotrgl function allows userMatrix to be supplied to set the camera back to that position
 #'
 #' @details
 #' Bonds are enriched with atom coordinates via
@@ -119,7 +122,8 @@ plotrgl <- function(
     bond_alpha = 1,
     grid = FALSE,
     grid_n = 10,
-    aspect = c(1, 1, 1)
+    aspect = c(1, 1, 1),
+    userMatrix = NULL
 ) {
   # ---- Validate inputs -------------------------------------------------------
   assertions::assert_dataframe(atoms)
@@ -159,6 +163,12 @@ plotrgl <- function(
 
   rgl::bg3d(color = colour_bg)
   rgl::light3d(specular = "white", diffuse = "white", ambient = "gray20")
+
+
+  # Camera Setup ------------------------------------------------------------
+  if(!is.null(userMatrix)){
+    rgl::par3d(userMatrix = userMatrix)
+  }
 
   # ---- Draw atoms (or not), depending on label_mode --------------------------
   # - "none":        draw opaque (or user-specified) atoms only

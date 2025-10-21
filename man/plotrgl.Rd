@@ -33,7 +33,8 @@ plotrgl(
   bond_alpha = 1,
   grid = FALSE,
   grid_n = 10,
-  aspect = c(1, 1, 1)
+  aspect = c(1, 1, 1),
+  userMatrix = NULL
 )
 }
 \arguments{
@@ -114,6 +115,10 @@ flat (non-specular) look when \code{label_mode = "transparent"}.}
 \item{grid_n}{Integer; number of grid lines per drawn axis when \code{grid = TRUE}.}
 
 \item{aspect}{Numeric length-3 vector for aspect ratio (currently not used).}
+
+\item{userMatrix}{a user matrix representing camera position structure should be viewed from. Its common to manually find a good camera position
+then fetch this variable from the current plot with \code{rgl::par3d("userMatrix")}.
+The plotrgl function allows userMatrix to be supplied to set the camera back to that position}
 }
 \value{
 (Invisibly) a list with two elements:
