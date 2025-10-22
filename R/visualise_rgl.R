@@ -38,6 +38,7 @@
 #'     `atom_alpha_when_labelled` and `atom_shininess`).
 #' @param col_label Column name (in `atoms`) whose values are shown as labels
 #'   when `label_mode != "none"`. Defaults to `col_atom_name`.
+#' @param label_colour Colour of labels. If NULL will inherit from `col_atom_colour`.
 #' @param atom_alpha Atom opacity when `label_mode` is not `"transparent"`.
 #' @param atom_alpha_when_labelled Atom opacity used when `label_mode = "transparent"`.
 #' @param atom_radius Sphere radius used for atoms.
@@ -114,7 +115,7 @@ plotrgl <- function(
     label_mode = c("none", "no_atoms", "transparent"),
     col_label = col_atom_name,
     label_cex = 1,
-    label_colour = "#F0F8E6",
+    label_colour = "#F0F8E6", # If null will copy colour of
     atom_alpha = 1,
     atom_alpha_when_labelled = 0.1,
     atom_radius = 0.3,
@@ -205,7 +206,7 @@ plotrgl <- function(
       rgl::texts3d(
         x, y, z,
         texts = labels,
-        color = label_colour,
+        color = if(!is.null(label_colour)) label_colour else ..colour,
         emission = "white",
         specular = "white",
         lit = FALSE,
