@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/chemviewR)](https://CRAN.R-project.org/package=chemviewR)
 <!-- badges: end -->
 
-The goal of chemviewR is to visualise chemical structures.
+The goal of chemviewR is to visualise chemical structures. 
 
 ## Installation
 
@@ -38,32 +38,17 @@ remotes::install_github("selkamand/chemviewR")
 
 ```{r example}
 library(chemviewR)
-library(bio3d)
+library(structures)
 library(rgl)
 setupKnitr()
 
 # Read Mol file
 benzene_file = system.file(package = "chemviewR", "benzene.mol2")
-benzene = bio3d::read.mol2(benzene_file)
+benzene = structures::read_mol2(benzene_file)
 
-# Get two data.frames. One describing atoms, the other bonds
-benzene_atoms = benzene$atom
-benzene_bonds = benzene$bond
 
-plotrgl(benzene_atoms, benzene_bonds, axes = FALSE)
+plotrgl(benzene, axes = FALSE)
 rgl::rglwidget()
 ```
 
-```{r}
-# Read Mol file
-fe_tripod_file = system.file(package = "chemviewR", "fe_tripod.mol2")
-fe_tripod = bio3d::read.mol2(fe_tripod_file)
-
-# Get two data.frames. One describing atoms, the other bonds
-fe_tripod_atoms = fe_tripod$atom
-fe_tripod_bonds = fe_tripod$bond
-
-plotrgl(fe_tripod_atoms, fe_tripod_bonds, axes = FALSE)
-rgl::rglwidget()
-```
 

@@ -14,11 +14,13 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Imports: 
     assertions,
-    dplyr,
     rgl,
-    rlang
+    rlang,
+    structures (>= 0.0.0.9000)
 Depends: 
     R (>= 3.5)
 LazyData: true
 URL: https://github.com/selkamand/chemviewR
 BugReports: https://github.com/selkamand/chemviewR/issues
+Remotes:  
+    selkamand/structures
