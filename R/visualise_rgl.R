@@ -62,19 +62,19 @@
 #' @examples
 #' \dontrun{
 #' mol <- structures::read_mol2(system.file(package = "chemviewR", "benzene.mol2"))
-#' plotrgl(mol, axes = TRUE, grid = TRUE)
+#' plot_molecule(mol, axes = TRUE, grid = TRUE)
 #'
 #' # Labels only
-#' plotrgl(mol, label_mode = "no_atoms", label = "elena")
+#' plot_molecule(mol, label_mode = "no_atoms", label = "elena")
 #'
 #' # Reuse a saved camera/view
 #' M <- rgl::par3d("userMatrix")
-#' plotrgl(mol, userMatrix = M)
+#' plot_molecule(mol, userMatrix = M)
 #' }
 #'
 #' @seealso prepare_atoms_for_plotting, enrich_bonds_with_xyz_position, to_interleaved
 #' @export
-plotrgl <- function(
+plot_molecule <- function(
     molecule,
     highlight = NULL, # Which element numbers to highlight
     highlight_colour = "pink",

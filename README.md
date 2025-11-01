@@ -38,7 +38,7 @@ benzene_file = system.file(package = "chemviewR", "benzene.mol2")
 benzene = structures::read_mol2(benzene_file)
 
 
-plotrgl(benzene, axes = FALSE)
+plot_molecule(benzene, show_anchor = TRUE)
 rgl::rglwidget()
 #> Error in with_random_port(launch_chrome_impl, path = path, args = args) : 
 #>   Cannot find an available port. Please try again.
@@ -49,4 +49,4 @@ rgl::rglwidget()
 #> webshot2::webshot() failed; trying rgl.snapshot()
 ```
 
-<img src="../../../../private/var/folders/d9/x2yygv_13_15dw5f8fspdn880000gp/T/Rtmpmv1oK6/file1039c1fa39ad0.png" width="100%" />
+<img src="../../../../private/var/folders/d9/x2yygv_13_15dw5f8fspdn880000gp/T/Rtmpqwn6sF/file14c2367813918.png" width="100%" />
