@@ -32,7 +32,8 @@ plot_molecule(
   userMatrix = NULL,
   show_anchor = FALSE,
   anchor_scale = 0.3,
-  anchor_colour = "pink"
+  anchor_colour = "pink",
+  add_light = TRUE
 )
 }
 \arguments{
@@ -105,6 +106,8 @@ to set the camera/view.}
 \item{anchor_scale}{Control size of the anchor (number)}
 
 \item{anchor_colour}{Colour of the anchor (string)}
+
+\item{add_light}{should a light source be added?}
 }
 \value{
 (Invisibly) a list:

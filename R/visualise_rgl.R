@@ -46,6 +46,7 @@
 #' @param aspect Length-3 numeric vector for aspect ratio (reserved; not currently applied).
 #' @param userMatrix Optional 4×4 user view matrix (e.g., from \code{rgl::par3d("userMatrix")})
 #'   to set the camera/view.
+#' @param add_light should a light source be added?
 #'
 #' @details
 #' Bonds are expanded with atom coordinates using \code{enrich_bonds_with_xyz_position()}
@@ -102,7 +103,8 @@ plot_molecule <- function(
     userMatrix = NULL,
     show_anchor = FALSE,
     anchor_scale = 0.3,
-    anchor_colour = "pink"
+    anchor_colour = "pink",
+    add_light = TRUE
 ) {
   # ---- Validate inputs -------------------------------------------------------
   assertions::assert_class(molecule, class = "structures::Molecule3D")
@@ -132,7 +134,10 @@ plot_molecule <- function(
   }
 
   rgl::bg3d(color = colour_bg)
-  rgl::light3d(specular = "white", diffuse = "white", ambient = "gray20")
+
+  if(add_light){
+    rgl::light3d(specular = "white", diffuse = "white", ambient = "gray20")
+  }
 
 
   # Camera Setup ------------------------------------------------------------
@@ -218,11 +223,12 @@ plot_molecule <- function(
   # ---- Draw Anchor  ----------------------------------------------
   if(show_anchor){
     anchor <- molecule@anchor
-    anchor_shape <- rgl::octahedron3d(col = anchor_colour)
-    anchor_shape <- rgl::translate3d(anchor_shape, anchor[1], anchor[2], anchor[3])
-    anchor_shape <- rgl::scale3d(anchor_shape, x = anchor_scale, anchor_scale, anchor_scale)
+    shp <- rgl::octahedron3d(col = anchor_colour)
+    shp <- rgl::scale3d(shp, anchor_scale, anchor_scale, anchor_scale)   # scale first
+    shp <- rgl::translate3d(shp, anchor[1], anchor[2], anchor[3])        # then translate
+
     # Render anchor
-    rgl::wire3d(anchor_shape, lit=FALSE)
+    rgl::wire3d(shp, lit = FALSE)
   }
 
   # ---- Return IDs for downstream updates ------------------------------------
