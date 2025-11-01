@@ -27,7 +27,7 @@
 #'     \item \code{"no_atoms"}: labels only (no spheres);
 #'     \item \code{"transparent"}: labels and semi-transparent, non-specular spheres.
 #'   }
-#' @param label One of \code{c("element","elena","eleno")}; column in \code{atoms}
+#' @param label One of \code{c("element","elena","eleno", "elena_eleno")}; column in \code{atoms}
 #'   used for text labels when \code{label_mode != "none"}.
 #' @param label_cex Character expansion for labels.
 #' @param label_colour Label colour; if \code{NULL}, labels inherit the per-atom
@@ -88,7 +88,7 @@ plot_molecule <- function(
     colour_bg = "black",
     colour_axis = "red",
     label_mode = c("none", "no_atoms", "transparent"),
-    label = c("element", "elena", "eleno"),
+    label = c("element", "elena", "eleno", "elena_eleno"),
     label_cex = 1,
     label_colour = "#F0F8E6", # If null will inherit colour from atom_colour_type/colour_map_atom
     atom_alpha = 1,

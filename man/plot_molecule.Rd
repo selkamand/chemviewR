@@ -18,7 +18,7 @@ plot_molecule(
   colour_bg = "black",
   colour_axis = "red",
   label_mode = c("none", "no_atoms", "transparent"),
-  label = c("element", "elena", "eleno"),
+  label = c("element", "elena", "eleno", "elena_eleno"),
   label_cex = 1,
   label_colour = "#F0F8E6",
   atom_alpha = 1,
@@ -72,7 +72,7 @@ atom/label display:
 \item \code{"transparent"}: labels and semi-transparent, non-specular spheres.
 }}
 
-\item{label}{One of \code{c("element","elena","eleno")}; column in \code{atoms}
+\item{label}{One of \code{c("element","elena","eleno", "elena_eleno")}; column in \code{atoms}
 used for text labels when \code{label_mode != "none"}.}
 
 \item{label_cex}{Character expansion for labels.}

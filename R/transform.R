@@ -11,6 +11,8 @@ prepare_atoms_for_plotting <- function(atoms, atom_colour_type, colour_map = pal
   # Add highlights
   atoms[["..colour"]] <- ifelse(atom_ids %in% highlight, highlight_colour, atoms[["..colour"]])
 
+  # Add elena_eleno column so we can use both as labels
+  atoms[["elena_eleno"]] <- paste0(atoms$elena, "(", atoms$eleno, ")")
 
   return(atoms)
 }
