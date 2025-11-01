@@ -1,119 +1,91 @@
 #' Plot atoms and bonds in 3D with rgl
 #'
-#' Renders a ball–stick scene from atom and bond tables using **rgl**.
-#' Each atom is drawn as a sphere and each bond as a segment connecting
-#' referenced atom coordinates. Labels can be drawn with different display
-#' modes via `label_mode`.
+#' Renders a ball–stick view of a \code{Molecule3D} using **rgl**. Atoms are drawn
+#' as spheres, bonds as line segments, and optional labels can be shown with
+#' different display modes via \code{label_mode}.
 #'
-#' @param atoms Data frame of atoms with numeric columns `x`, `y`, `z`, an ID
-#'   column (named by `col_atom_id`), and a name/element column (named by
-#'   `col_atom_name`).
-#' @param bonds Data frame of bonds with two columns that reference atom IDs:
-#'   origin (named by `col_bond_origin`) and target (named by `col_bond_target`).
-#' @param col_atom_id Character scalar naming the atom ID column in `atoms`.
-#' @param col_atom_name Character scalar naming the atom element/name column
-#'   in `atoms`.
-#' @param highlight Optional selection of atoms to highlight. Supply values of
-#'   `col_atom_id` (e.g., numeric IDs) or a logical vector aligned with `atoms`.
-#'   When provided, these atoms are colored using `highlight_colour`.
-#' @param highlight_colour Single color used for atoms in `highlight`; overrides
-#'   the normal color mapping for those atoms (default: `"pink"`).
-#' @param col_atom_colour Column name (in `atoms`) or a vector used to assign
-#'   atom colors. Defaults to `col_atom_name`, which is mapped via
-#'   `colour_map_atom`.
-#' @param clear_scene Logical; if `TRUE`, clears the existing rgl scene first.
-#' @param colour_map_atom Named character vector mapping element/name → color
-#'   (e.g., Jmol-style colors). Used by `prepare_atoms_for_plotting()`.
-#' @param strip_numbers Logical; if `TRUE`, digits are stripped from the
-#'   `col_atom_name` values before color lookup (useful for labels like `"C12"` → `"C"`).
-#' @param missing Color to use for atoms not found in `colour_map_atom`.
+#' @param molecule A \code{Molecule3D} object (see \code{structures::read_mol2()}).
+#' @param highlight Optional selection of atoms to highlight. Either values of
+#'   \code{eleno} (atom IDs) or a logical vector aligned with \code{molecule@atoms}.
+#' @param highlight_colour Single colour for highlighted atoms (default \code{"pink"}).
+#' @param atom_colour_type One of \code{c("element","elena","eleno")}; selects which
+#'   column drives per-atom colours.
+#' @param clear_scene Logical; if \code{TRUE}, clears the current rgl scene first.
+#' @param colour_map_atom Named character vector mapping key \eqn{\rightarrow} colour
+#'   (e.g., Jmol-style palette) used by \code{prepare_atoms_for_plotting()}.
+#' @param missing Colour used when a key is not found in \code{colour_map_atom}.
+#' @param strip_numbers Logical; if \code{TRUE}, digits are stripped from labels
+#'   before colour lookup (e.g., \code{"C12"} \eqn{\rightarrow} \code{"C"}).
 #' @param bond_width Numeric line width for bonds.
-#' @param axes Logical; draw labeled axes box if `TRUE`.
-#' @param colour_axis Axis and label color.
-#' @param label_mode One of `c("none", "no_atoms", "transparent")`. Controls
-#'   how labels and atoms are displayed:
-#'   - `"none"`: draw atoms (opaque by default) and no labels;
-#'   - `"no_atoms"`: draw only labels (no atom spheres);
-#'   - `"transparent"`: draw labels and semi-transparent atoms (see
-#'     `atom_alpha_when_labelled` and `atom_shininess`).
-#' @param col_label Column name (in `atoms`) whose values are shown as labels
-#'   when `label_mode != "none"`. Defaults to `col_atom_name`.
-#' @param label_colour Colour of labels. If NULL will inherit from `col_atom_colour`.
-#' @param atom_alpha Atom opacity when `label_mode` is not `"transparent"`.
-#' @param atom_alpha_when_labelled Atom opacity used when `label_mode = "transparent"`.
-#' @param atom_radius Sphere radius used for atoms.
-#' @param atom_shininess Numeric shininess for atom spheres; forcibly set to `0` for a
-#'   flat (non-specular) look when `label_mode = "transparent"`.
-#' @param grid Logical; draw orthogonal reference grids if `TRUE`.
-#' @param grid_n Integer; number of grid lines per drawn axis when `grid = TRUE`.
-#' @param aspect Numeric length-3 vector for aspect ratio (currently not used).
-#' @param col_bond_origin Name of column in bonds datatframe describing the atom_id of the first element involved in bond
-#' @param col_bond_target Name of column in bonds datatframe describing the atom_id of the second element involved in bond
-#' @param colour_bg Colour of scene background
-#' @param label_cex Label character expansion value.
-#' @param label_colour colour of atom labels
+#' @param axes Logical; draw axes box and axis labels.
+#' @param colour_bg Background colour for the scene.
+#' @param colour_axis Axis/label colour.
+#' @param label_mode One of \code{c("none","no_atoms","transparent")} controlling
+#'   atom/label display:
+#'   \itemize{
+#'     \item \code{"none"}: spheres only, no labels;
+#'     \item \code{"no_atoms"}: labels only (no spheres);
+#'     \item \code{"transparent"}: labels and semi-transparent, non-specular spheres.
+#'   }
+#' @param label One of \code{c("element","elena","eleno")}; column in \code{atoms}
+#'   used for text labels when \code{label_mode != "none"}.
+#' @param label_cex Character expansion for labels.
+#' @param label_colour Label colour; if \code{NULL}, labels inherit the per-atom
+#'   colour (\code{..colour}).
+#' @param atom_alpha Sphere opacity when \code{label_mode != "transparent"}.
+#' @param atom_alpha_when_labelled Sphere opacity when \code{label_mode == "transparent"}.
+#' @param atom_radius Sphere radius.
+#' @param atom_shininess Sphere shininess; forced to \code{0} when
+#'   \code{label_mode == "transparent"} for a flat look.
 #' @param bond_alpha Opacity of bond segments.
-#' @param userMatrix a user matrix representing camera position structure should be viewed from. Its common to manually find a good camera position
-#' then fetch this variable from the current plot with \code{rgl::par3d("userMatrix")}.
-#' The plotrgl function allows userMatrix to be supplied to set the camera back to that position
+#' @param grid Logical; draw orthogonal reference grids.
+#' @param grid_n Integer; number of grid lines per axis when \code{grid = TRUE}.
+#' @param aspect Length-3 numeric vector for aspect ratio (reserved; not currently applied).
+#' @param userMatrix Optional 4×4 user view matrix (e.g., from \code{rgl::par3d("userMatrix")})
+#'   to set the camera/view.
 #'
 #' @details
-#' Bonds are enriched with atom coordinates via
-#' `enrich_bonds_with_xyz_position()` and converted to an interleaved start/end
-#' format by `to_interleaved()` (columns `x,y,z` and `xend,yend,zend` become
-#' alternating rows suitable for [rgl::segments3d()]).
+#' Bonds are expanded with atom coordinates using \code{enrich_bonds_with_xyz_position()}
+#' and interleaved by \code{to_interleaved()} into alternating start/end rows for
+#' \code{rgl::segments3d()}. Labels are drawn with \code{rgl::texts3d()} and use
+#' depth settings that keep them visible over spheres.
 #'
-#' Labels are drawn at the atom coordinates using [rgl::texts3d()]. Depth test
-#' is disabled for labels to ensure visibility over spheres (see code comments).
-#'
-#' @return (Invisibly) a list with two elements:
+#' @return (Invisibly) a list:
 #' \describe{
-#'   \item{atoms}{Vector of RGL object IDs for atom spheres (or `NULL` if none).}
-#'   \item{bonds}{Vector of RGL object IDs for bond segments.}
+#'   \item{atoms}{Integer vector of rgl object IDs for atom spheres (or \code{NULL} if not drawn).}
+#'   \item{bonds}{Integer vector of rgl object IDs for bond segments.}
 #' }
 #'
 #' @examples
 #' \dontrun{
-#' # Minimal toy example (two atoms connected by one bond)
-#' atoms <- data.frame(
-#'   eleno = c(1, 2),
-#'   elena = c("C", "O"),
-#'   x = c(0, 1), y = c(0, 0), z = c(0, 0)
-#' )
-#' bonds <- data.frame(origin = 1, target = 2)
+#' mol <- structures::read_mol2(system.file(package = "chemviewR", "benzene.mol2"))
+#' plotrgl(mol, axes = TRUE, grid = TRUE)
 #'
-#' plotrgl(
-#'   atoms, bonds,
-#'   col_atom_id = "eleno",
-#'   col_atom_name = "elena",
-#'   bond_width = 3,
-#'   axes = TRUE, grid = TRUE,
-#'   label_mode = "transparent"
-#' )
+#' # Labels only
+#' plotrgl(mol, label_mode = "no_atoms", label = "elena")
+#'
+#' # Reuse a saved camera/view
+#' M <- rgl::par3d("userMatrix")
+#' plotrgl(mol, userMatrix = M)
 #' }
 #'
 #' @seealso prepare_atoms_for_plotting, enrich_bonds_with_xyz_position, to_interleaved
 #' @export
 plotrgl <- function(
-    atoms,
-    bonds,
-    col_bond_origin = "origin",
-    col_bond_target = "target",
-    col_atom_id = "eleno",
-    col_atom_name = "elena",
+    molecule,
     highlight = NULL, # Which element numbers to highlight
     highlight_colour = "pink",
-    col_atom_colour = col_atom_name,
+    atom_colour_type = c("element", "elena", "eleno"),
     clear_scene = TRUE,
     colour_map_atom = pal_atoms(),
     missing = "grey",
     strip_numbers = TRUE,
     bond_width = 2,
-    axes = TRUE,
+    axes = FALSE,
     colour_bg = "black",
     colour_axis = "red",
     label_mode = c("none", "no_atoms", "transparent"),
-    col_label = col_atom_name,
+    label = c("element", "elena", "eleno"),
     label_cex = 1,
     label_colour = "#F0F8E6", # If null will copy colour of
     atom_alpha = 1,
@@ -127,35 +99,26 @@ plotrgl <- function(
     userMatrix = NULL
 ) {
   # ---- Validate inputs -------------------------------------------------------
-  assertions::assert_dataframe(atoms)
-  assertions::assert_dataframe(bonds)
-  assertions::assert_names_include(
-    atoms, names = c(col_atom_id, col_atom_name, "x", "y", "z")
-  )
-  assertions::assert_names_include(
-    bonds, names = c(col_bond_origin, col_bond_target)
-  )
+  assertions::assert_class(molecule, class = "structures::Molecule3D")
+  atom_colour_type <- rlang::arg_match(atom_colour_type)
   label_mode <- rlang::arg_match(label_mode)
+  label <- rlang::arg_match(label)
 
-  # ---- Prepare bonds: attach coordinates and interleave for segments3d -------
-  bonds_enriched <- enrich_bonds_with_xyz_position(
-    bonds, atoms,
-    origin = col_bond_origin, target = col_bond_target, atom_id = col_atom_id
-  )
-  # rgl::segments3d uses alternating rows as start/end of each segment
-  bonds_interleaved <- to_interleaved(bonds_enriched)
+  # ---- Fetch Atom -------
+  bonds_interleaved <- molecule@bond_positions_interleaved
+  atoms <- molecule@atoms
 
   # ---- Prepare atoms: compute per-atom color column '..colour' ---------------
   atoms_enriched <- prepare_atoms_for_plotting(
     atoms = atoms,
-    col_name = col_atom_colour,
-    col_id = col_atom_id,
     colour_map = colour_map_atom,
+    missing = missing,
+    atom_colour_type = atom_colour_type,
     strip_numbers = strip_numbers,
     highlight = highlight,
-    highlight_colour = highlight_colour,
-    missing = missing
+    highlight_colour = highlight_colour
   )
+
 
   # ---- Scene setup -----------------------------------------------------------
   if (clear_scene) {
@@ -197,7 +160,7 @@ plotrgl <- function(
 
   # ---- Draw labels depending on label_mode -----------------------------------
   if (label_mode != "none") {
-    labels <- atoms_enriched[[col_label]]
+    labels <- atoms_enriched[[label]]
 
     # Draw labels at atom positions. We give them an emissive color to "pop"
     # and disable depth test/writes so they stay visible over spheres.
