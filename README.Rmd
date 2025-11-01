@@ -47,7 +47,7 @@ benzene_file = system.file(package = "chemviewR", "benzene.mol2")
 benzene = structures::read_mol2(benzene_file)
 
 
-plotrgl(benzene, axes = FALSE)
+plotrgl(benzene, show_anchor = TRUE)
 rgl::rglwidget()
 ```
 

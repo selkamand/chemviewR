@@ -29,7 +29,10 @@ plotrgl(
   grid = FALSE,
   grid_n = 10,
   aspect = c(1, 1, 1),
-  userMatrix = NULL
+  userMatrix = NULL,
+  show_anchor = FALSE,
+  anchor_scale = 0.3,
+  anchor_colour = "pink"
 )
 }
 \arguments{
@@ -96,6 +99,12 @@ colour (\code{..colour}).}
 
 \item{userMatrix}{Optional 4×4 user view matrix (e.g., from \code{rgl::par3d("userMatrix")})
 to set the camera/view.}
+
+\item{show_anchor}{Render a wireframe octahedron wherever the anchor is}
+
+\item{anchor_scale}{Control size of the anchor (number)}
+
+\item{anchor_colour}{Colour of the anchor (string)}
 }
 \value{
 (Invisibly) a list:

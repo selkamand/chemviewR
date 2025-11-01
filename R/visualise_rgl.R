@@ -40,6 +40,9 @@
 #' @param bond_alpha Opacity of bond segments.
 #' @param grid Logical; draw orthogonal reference grids.
 #' @param grid_n Integer; number of grid lines per axis when \code{grid = TRUE}.
+#' @param show_anchor Render a wireframe octahedron wherever the anchor is
+#' @param anchor_scale Control size of the anchor (number)
+#' @param anchor_colour Colour of the anchor (string)
 #' @param aspect Length-3 numeric vector for aspect ratio (reserved; not currently applied).
 #' @param userMatrix Optional 4×4 user view matrix (e.g., from \code{rgl::par3d("userMatrix")})
 #'   to set the camera/view.
@@ -87,7 +90,7 @@ plotrgl <- function(
     label_mode = c("none", "no_atoms", "transparent"),
     label = c("element", "elena", "eleno"),
     label_cex = 1,
-    label_colour = "#F0F8E6", # If null will copy colour of
+    label_colour = "#F0F8E6", # If null will inherit colour from atom_colour_type/colour_map_atom
     atom_alpha = 1,
     atom_alpha_when_labelled = 0.1,
     atom_radius = 0.3,
@@ -96,7 +99,10 @@ plotrgl <- function(
     grid = FALSE,
     grid_n = 10,
     aspect = c(1, 1, 1),
-    userMatrix = NULL
+    userMatrix = NULL,
+    show_anchor = FALSE,
+    anchor_scale = 0.3,
+    anchor_colour = "pink"
 ) {
   # ---- Validate inputs -------------------------------------------------------
   assertions::assert_class(molecule, class = "structures::Molecule3D")
@@ -207,6 +213,16 @@ plotrgl <- function(
   # if (!missing(aspect)) rgl::aspect3d(aspect[1], aspect[2], aspect[3]) # reserved
   if (grid) {
     rgl::grid3d(c("x", "y+", "z+"), n = grid_n)
+  }
+
+  # ---- Draw Anchor  ----------------------------------------------
+  if(show_anchor){
+    anchor <- molecule@anchor
+    anchor_shape <- rgl::octahedron3d(col = anchor_colour)
+    anchor_shape <- rgl::translate3d(anchor_shape, anchor[1], anchor[2], anchor[3])
+    anchor_shape <- rgl::scale3d(anchor_shape, x = anchor_scale, anchor_scale, anchor_scale)
+    # Render anchor
+    rgl::wire3d(anchor_shape, lit=FALSE)
   }
 
   # ---- Return IDs for downstream updates ------------------------------------
