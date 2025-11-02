@@ -32,6 +32,8 @@
 #' @param label_cex Character expansion for labels.
 #' @param label_colour Label colour; if \code{NULL}, labels inherit the per-atom
 #'   colour (\code{..colour}).
+#' @param label_bonds Logical; should bonds be labelled with their ID
+#' @param label_colour_bonds Colour of bond labels.
 #' @param atom_alpha Sphere opacity when \code{label_mode != "transparent"}.
 #' @param atom_alpha_when_labelled Sphere opacity when \code{label_mode == "transparent"}.
 #' @param atom_radius Sphere radius.
@@ -89,9 +91,11 @@ plot_molecule <- function(
     colour_bg = "black",
     colour_axis = "red",
     label_mode = c("none", "no_atoms", "transparent"),
+    label_bonds = FALSE,
     label = c("element", "elena", "eleno", "elena_eleno"),
     label_cex = 1,
     label_colour = "#F0F8E6", # If null will inherit colour from atom_colour_type/colour_map_atom
+    label_colour_bonds = "yellow",
     atom_alpha = 1,
     atom_alpha_when_labelled = 0.1,
     atom_radius = 0.3,
@@ -205,6 +209,10 @@ plot_molecule <- function(
       alpha = bond_alpha
     )
   )
+  if(label_bonds){
+    bond_positions <- molecule@bond_positions[c("bond_id", "x_middle", "y_middle", "z_middle")]
+    rgl::texts3d(texts = bond_positions$bond_id, x = bond_positions$x_middle, y = bond_positions$y_middle, z = bond_positions$z_middle, lit = FALSE, color = label_colour_bonds)
+  }
 
   # ---- Axes and optional grids ----------------------------------------------
   if (axes) {

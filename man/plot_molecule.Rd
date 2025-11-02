@@ -18,9 +18,11 @@ plot_molecule(
   colour_bg = "black",
   colour_axis = "red",
   label_mode = c("none", "no_atoms", "transparent"),
+  label_bonds = FALSE,
   label = c("element", "elena", "eleno", "elena_eleno"),
   label_cex = 1,
   label_colour = "#F0F8E6",
+  label_colour_bonds = "yellow",
   atom_alpha = 1,
   atom_alpha_when_labelled = 0.1,
   atom_radius = 0.3,
@@ -73,6 +75,8 @@ atom/label display:
 \item \code{"transparent"}: labels and semi-transparent, non-specular spheres.
 }}
 
+\item{label_bonds}{Logical; should bonds be labelled with their ID}
+
 \item{label}{One of \code{c("element","elena","eleno", "elena_eleno")}; column in \code{atoms}
 used for text labels when \code{label_mode != "none"}.}
 
@@ -80,6 +84,8 @@ used for text labels when \code{label_mode != "none"}.}
 
 \item{label_colour}{Label colour; if \code{NULL}, labels inherit the per-atom
 colour (\code{..colour}).}
+
+\item{label_colour_bonds}{Colour of bond labels.}
 
 \item{atom_alpha}{Sphere opacity when \code{label_mode != "transparent"}.}
 
