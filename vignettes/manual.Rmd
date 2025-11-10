@@ -1,0 +1,130 @@
+---
+title: "Manual"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{manual}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(rgl.useNULL = TRUE) # render offscreen for snapshots
+rgl::setupKnitr()
+```
+
+```{r setup}
+library(chemviewR)
+library(chemviewR)
+library(structures)
+library(rgl)
+```
+
+## Installation
+
+You can install the development version of chemviewR like so:
+
+``` r
+if (!require("remotes"))
+    install.packages("remotes")
+
+remotes::install_github("selkamand/chemviewR")
+```
+
+## Visualise Molecules
+
+
+```{r}
+# Read Mol file
+aspirin_file = system.file(package = "chemviewR", "aspirin.mol2")
+aspirin = structures::read_mol2(aspirin_file)
+
+# Plot molecule
+plot_molecule(aspirin)
+rglwidget()
+```
+
+## Visualising Multiple Atoms
+
+```{r}
+
+# Define Paths to Mol2 files
+benzene_file = system.file(package = "chemviewR", "benzene.mol2")
+caffeine_file = system.file(package = "chemviewR", "caffeine.mol2")
+sunflower_file = system.file(package = "chemviewR", "sunflower.mol2")
+fe_tripod = system.file(package = "chemviewR", "fe_tripod.mol2")
+aspirin_file = system.file(package = "chemviewR", "aspirin.mol2")
+basketine_file = system.file(package = "chemviewR", "basketane.mol2")
+cubane_file = system.file(package = "chemviewR", "cubane.mol2")
+fullerene_file = system.file(package = "chemviewR", "fullerene.mol2")
+
+# Parse mol2 files using the structures package
+benzene = read_mol2(benzene_file)
+caffeine = read_mol2(caffeine_file)
+sunflower = read_mol2(sunflower_file)
+fe_tripod = read_mol2(fe_tripod_file)
+aspirin = read_mol2(aspirin_file)
+basketine = read_mol2(basketine_file)
+cubane = read_mol2(cubane_file)
+fullerene = read_mol2(fullerene_file)
+
+
+# Plot Molecules
+open3d()
+layout3d(matrix(1:16, 4,4), heights=c(1,3,1,3))
+text3d(0,0,0,"Benzene"); next3d()
+plot_molecule(benzene, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Caffeine"); next3d()
+plot_molecule(caffeine, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Sunflower"); next3d()
+plot_molecule(sunflower, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Iron tripod"); next3d()
+plot_molecule(fe_tripod, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Aspirin"); next3d()
+plot_molecule(aspirin, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Basketine"); next3d()
+plot_molecule(basketine, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Cubane"); next3d()
+plot_molecule(cubane, clear_scene = FALSE); next3d()
+text3d(0,0,0,"Fullerene"); next3d()
+plot_molecule(fullerene, clear_scene = FALSE);
+rglwidget()
+```
+
+
+## Add symmetry axes
+
+Iron tripod has a C3 proper rotational axis. We can add this information to our structure and chemviewR will automatically show the C3 axis (in purple)
+
+```{r}
+
+# Read Mol file
+fe_tripod_file = system.file(package = "chemviewR", "fe_tripod.mol2")
+fe_tripod = structures::read_mol2(fe_tripod_file)
+
+# First we define our c3 axis based on two points. The center of the nitrogen atoms and the location of the iron atom
+nitrogens = fetch_eleno_by_name(fe_tripod, "N5")
+iron = fetch_eleno_by_element(fe_tripod, "Fe")
+
+posA = fe_tripod |>
+  filter_atoms(nitrogens) |>
+  locate_molecule_center()
+
+posB = fe_tripod |>
+  filter_atoms(iron) |>
+  locate_molecule_center()
+
+fe_tripod <- fe_tripod |>
+  add_symmetry_axis(
+  SymAxis(Cn = 3, posA = posA, posB = posB, label = "Iron Tripod C3")  
+  )
+
+
+# Plot molecule with C3 axis (shown in purple)
+plot_molecule(fe_tripod)
+rglwidget()
+```
+

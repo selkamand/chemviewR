@@ -62,3 +62,28 @@ pal_atoms <- function(){
     "Pb" = "#575961"   # Dark grey
   )
 }
+
+
+#' Colour palette of Proper Rotation Axes by Order
+#'
+#' Returns a named character vector mapping Proper Rotation Axis Order (Cn) to distinct colours.
+#' Includes an 'Other' entry used when
+#'
+#' @return A named character vector of hexadecimal colour codes, where names
+#'   are proper rotation axis order's (e.g. n in Cn)
+#'
+#' @examples
+#' pal <- pal_symmetries()
+#'
+#' @export
+pal_symmetries <- function(){
+  c(
+    "1" = "#2297E6",
+    "2" = "#28E2E5",
+    "3" = "#CD0BBC",
+    "4" = "#F5C710",
+    "5" = "#DF536B",
+    "6" = "#61D04F",
+    "Other" = "gray62"
+  )
+}

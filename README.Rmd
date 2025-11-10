@@ -8,7 +8,6 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
   out.width = "100%"
 )
 ```
@@ -16,11 +15,14 @@ knitr::opts_chunk$set(
 # chemviewR
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CRAN status](https://www.r-pkg.org/badges/version/chemviewR)](https://CRAN.R-project.org/package=chemviewR)
+
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental) [![CRAN status](https://www.r-pkg.org/badges/version/chemviewR)](https://CRAN.R-project.org/package=chemviewR)
+
 <!-- badges: end -->
 
-The goal of chemviewR is to visualise chemical structures. 
+The goal of chemviewR is to visualise chemical structures.
+
+![](man/figures/multichemplot.png)
 
 ## Installation
 
@@ -33,22 +35,7 @@ if (!require("remotes"))
 remotes::install_github("selkamand/chemviewR")
 ```
 
-## Quick Start
+## Getting Started
 
-
-```{r example}
-library(chemviewR)
-library(structures)
-library(rgl)
-setupKnitr()
-
-# Read Mol file
-benzene_file = system.file(package = "chemviewR", "benzene.mol2")
-benzene = structures::read_mol2(benzene_file)
-
-
-plot_molecule(benzene, show_anchor = TRUE)
-rgl::rglwidget()
-```
-
+See the [manual](selkamand.github.io/chemViewR/articles/manual.html) to get started
 
