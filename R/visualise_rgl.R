@@ -49,6 +49,8 @@
 #' @param userMatrix Optional 4×4 user view matrix (e.g., from \code{rgl::par3d("userMatrix")})
 #'   to set the camera/view.
 #' @param add_light should a light source be added?
+#' @param show_symmetries draw lines representing symmetry axes
+#' @param colour_map_symmetries Named character vector mapping symmetry axis order (values) to colours (names). See [pal_symmetries()] for an example.
 #'
 #' @details
 #' Bonds are expanded with atom coordinates using \code{enrich_bonds_with_xyz_position()}
@@ -108,6 +110,8 @@ plot_molecule <- function(
     show_anchor = FALSE,
     anchor_scale = 0.3,
     anchor_colour = "pink",
+    show_symmetries = TRUE,
+    colour_map_symmetries = pal_symmetries(),
     add_light = TRUE
 ) {
   # ---- Validate inputs -------------------------------------------------------
@@ -115,7 +119,7 @@ plot_molecule <- function(
   atom_colour_type <- rlang::arg_match(atom_colour_type)
   label_mode <- rlang::arg_match(label_mode)
   label <- rlang::arg_match(label)
-
+  assertions::assert_names_include(colour_map_symmetries, names =  "Other", msg = "colour_map_symmetries palette requires an entry named 'Other' to use as colour of symmetry axes with orders not described by any of the other entries")
   # ---- Fetch Atom -------
   bonds_interleaved <- molecule@bond_positions_interleaved
   atoms <- molecule@atoms
@@ -237,6 +241,18 @@ plot_molecule <- function(
 
     # Render anchor
     rgl::wire3d(shp, lit = FALSE)
+  }
+
+  # Drawr Symmetry lines
+  if(show_symmetries == TRUE & molecule@contains_symmetry_axes){
+    lapply(
+      molecule@symmetry_axes,
+      function(symaxis){
+        colour = colour_map_symmetries[match(as.character(symaxis@Cn), names(colour_map_symmetries))]
+        colour = if(is.na(colour)) colour_map_symmetries["Other"] else colour
+        rgl::abclines3d(x=symaxis@posA, a = symaxis@direction, color = colour, lit = FALSE)
+      }
+    )
   }
 
   # ---- Return IDs for downstream updates ------------------------------------

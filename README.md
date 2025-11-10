@@ -39,14 +39,38 @@ benzene = structures::read_mol2(benzene_file)
 
 
 plot_molecule(benzene, show_anchor = TRUE)
-rgl::rglwidget()
-#> Error in with_random_port(launch_chrome_impl, path = path, args = args) : 
-#>   Cannot find an available port. Please try again.
-#> Caused by error in `startup()`:
-#> ! Failed to start chrome. Error:
-#> Old Headless mode has been removed from the Chrome binary. Please use the new Headless mode (https://developer.chrome.com/docs/chromium/new-headless) or the chrome-headless-shell which is a standalone implementation of the old Headless mode (https://developer.chrome.com/blog/chrome-headless-shell).
-#> Warning in snapshot3d(scene = x, width = width, height = height):
-#> webshot2::webshot() failed; trying rgl.snapshot()
+# rgl::rglwidget()
 ```
 
-<img src="../../../../private/var/folders/d9/x2yygv_13_15dw5f8fspdn880000gp/T/Rtmpqwn6sF/file14c2367813918.png" width="100%" />
+## Add symmetry axes
+
+Iron tripod has a C3 proper rotational axis. We can add this information
+to our structure and chemviewR will automatically show the axis
+
+``` r
+
+# Read Mol file
+fe_tripod_file = system.file(package = "chemviewR", "fe_tripod.mol2")
+fe_tripod = structures::read_mol2(fe_tripod_file)
+
+# First we define our c3 axis based on two points. The center of the nitrogen atoms and the location of the iron atom
+nitrogens = fetch_eleno_by_name(fe_tripod, "N5")
+iron = fetch_eleno_by_element(fe_tripod, "Fe")
+
+posA = fe_tripod |>
+  filter_atoms(nitrogens) |>
+  locate_molecule_center()
+
+posB = fe_tripod |>
+  filter_atoms(iron) |>
+  locate_molecule_center()
+
+fe_tripod <- fe_tripod |>
+  add_symmetry_axis(
+  SymAxis(Cn = 3, posA = posA, posB = posB, label = "Iron Tripod C3")  
+  )
+
+
+# Plot molecule with C3 axis (shown in purple)
+plot_molecule(fe_tripod)
+```

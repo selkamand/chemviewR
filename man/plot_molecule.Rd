@@ -35,6 +35,8 @@ plot_molecule(
   show_anchor = FALSE,
   anchor_scale = 0.3,
   anchor_colour = "pink",
+  show_symmetries = TRUE,
+  colour_map_symmetries = pal_symmetries(),
   add_light = TRUE
 )
 }
@@ -112,6 +114,10 @@ to set the camera/view.}
 \item{anchor_scale}{Control size of the anchor (number)}
 
 \item{anchor_colour}{Colour of the anchor (string)}
+
+\item{show_symmetries}{draw lines representing symmetry axes}
+
+\item{colour_map_symmetries}{Named character vector mapping symmetry axis order (values) to colours (names). See \code{\link[=pal_symmetries]{pal_symmetries()}} for an example.}
 
 \item{add_light}{should a light source be added?}
 }
