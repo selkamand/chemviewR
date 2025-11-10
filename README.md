@@ -9,9 +9,12 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/chemviewR)](https://CRAN.R-project.org/package=chemviewR)
+
 <!-- badges: end -->
 
 The goal of chemviewR is to visualise chemical structures.
+
+![](man/figures/multichemplot.png)
 
 ## Installation
 
@@ -24,53 +27,7 @@ if (!require("remotes"))
 remotes::install_github("selkamand/chemviewR")
 ```
 
-## Quick Start
+## Getting Started
 
-``` r
-library(chemviewR)
-library(structures)
-library(rgl)
-#> Warning: package 'rgl' was built under R version 4.4.1
-setupKnitr()
-
-# Read Mol file
-benzene_file = system.file(package = "chemviewR", "benzene.mol2")
-benzene = structures::read_mol2(benzene_file)
-
-
-plot_molecule(benzene, show_anchor = TRUE)
-# rgl::rglwidget()
-```
-
-## Add symmetry axes
-
-Iron tripod has a C3 proper rotational axis. We can add this information
-to our structure and chemviewR will automatically show the axis
-
-``` r
-
-# Read Mol file
-fe_tripod_file = system.file(package = "chemviewR", "fe_tripod.mol2")
-fe_tripod = structures::read_mol2(fe_tripod_file)
-
-# First we define our c3 axis based on two points. The center of the nitrogen atoms and the location of the iron atom
-nitrogens = fetch_eleno_by_name(fe_tripod, "N5")
-iron = fetch_eleno_by_element(fe_tripod, "Fe")
-
-posA = fe_tripod |>
-  filter_atoms(nitrogens) |>
-  locate_molecule_center()
-
-posB = fe_tripod |>
-  filter_atoms(iron) |>
-  locate_molecule_center()
-
-fe_tripod <- fe_tripod |>
-  add_symmetry_axis(
-  SymAxis(Cn = 3, posA = posA, posB = posB, label = "Iron Tripod C3")  
-  )
-
-
-# Plot molecule with C3 axis (shown in purple)
-plot_molecule(fe_tripod)
-```
+See the [manual](selkamand.github.io/chemViewR/articles/manual.html) to
+get started

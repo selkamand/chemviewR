@@ -7,6 +7,8 @@ Authors@R:
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -22,5 +24,6 @@ Depends:
 LazyData: true
 URL: https://github.com/selkamand/chemviewR
 BugReports: https://github.com/selkamand/chemviewR/issues
-Remotes:  
+Remotes: 
     selkamand/structures
+VignetteBuilder: knitr
