@@ -95,7 +95,7 @@ rglwidget()
 ```
 
 
-## Add symmetry axes
+## Show Symmetry Elements
 
 Iron tripod has a C3 proper rotational axis. We can add this information to our structure and chemviewR will automatically show the C3 axis (in purple)
 
@@ -118,8 +118,8 @@ posB = fe_tripod |>
   locate_molecule_center()
 
 fe_tripod <- fe_tripod |>
-  add_symmetry_axis(
-  SymAxis(Cn = 3, posA = posA, posB = posB, label = "Iron Tripod C3")  
+  add_symmetry_element_to_molecule(
+    ProperRotationAxis(n = 3, posA = posA, posB = posB, label = "Iron Tripod C3")  
   )
 
 

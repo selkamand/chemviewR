@@ -244,11 +244,13 @@ plot_molecule <- function(
   }
 
   # Drawr Symmetry lines
-  if(show_symmetries == TRUE & molecule@contains_symmetry_axes){
+  if(show_symmetries == TRUE){
+
+    # Proper Rotation Axes
     lapply(
-      molecule@symmetry_axes,
+      molecule@symmetry_elements@proper_rotation_axes,
       function(symaxis){
-        colour = colour_map_symmetries[match(as.character(symaxis@Cn), names(colour_map_symmetries))]
+        colour = colour_map_symmetries[match(as.character(symaxis@n), names(colour_map_symmetries))]
         colour = if(is.na(colour)) colour_map_symmetries["Other"] else colour
         rgl::abclines3d(x=symaxis@posA, a = symaxis@direction, color = colour, lit = FALSE)
       }
