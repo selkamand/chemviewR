@@ -291,16 +291,9 @@ add_plane <- function(normal, offset=0, color="pink", lit=FALSE, alpha = 0.5, sh
 
   if(show_normal){
     rgl::arrow3d(
-      # p0 = rep(0, times = length(normal)),
-      # p1 = normal,
       p0 = translate_position_in_direction(c(0, 0, 0), direction = normal, magnitude = -offset),
       p1 = translate_position_in_direction(normal, normal, magnitude = -offset),
       color=color, alpha = 1, lit=lit, type = "rotation", theta = pi/6,
-    )
-    rgl::arrow3d(
-      p0 = rep(0, times = length(normal)),
-      p1 = normal,
-      color="blue", alpha = 1, lit=lit, type = "rotation", theta = pi/6,
     )
   }
 
