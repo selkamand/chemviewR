@@ -1,14 +1,15 @@
 Package: chemviewR
-Title: What the Package Does (One Line, Title Case)
+Title: Visualise Chemical Structures
 Version: 0.0.0.9000
 Authors@R: 
     person("Sam", "El-Kamand", , "selkamand@ccia.org.au", role = c("aut", "cre"),
            comment = c(ORCID = "https://orcid.org/0000-0003-2270-8088"))
-Description: What the package does (one paragraph).
+Description: Produce interactive ball-and-stick visualisations of chemical structures.
 License: MIT + file LICENSE
 Suggests: 
     knitr,
     rmarkdown,
+    structures,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -17,8 +18,7 @@ RoxygenNote: 7.3.3
 Imports: 
     assertions,
     rgl,
-    rlang,
-    structures (>= 0.0.0.9000)
+    rlang
 Depends: 
     R (>= 3.5)
 LazyData: true

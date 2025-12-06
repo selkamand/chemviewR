@@ -1,10 +1,11 @@
 #' Plot atoms and bonds in 3D with rgl
 #'
-#' Renders a ball–stick view of a \code{Molecule3D} using **rgl**. Atoms are drawn
+#' Renders a ball and stick representation of a \code{Molecule3D} using **rgl**. Atoms are drawn
 #' as spheres, bonds as line segments, and optional labels can be shown with
 #' different display modes via \code{label_mode}.
 #'
 #' @param molecule A \code{Molecule3D} object (see \code{structures::read_mol2()}).
+#' @param widget Should this function return a htmlwidget object? (i.e. call `rgl::rglwidget()` at the end of plot creation)
 #' @param highlight Optional selection of atoms to highlight. Either values of
 #'   \code{eleno} (atom IDs) or a logical vector aligned with \code{molecule@atoms}.
 #' @param highlight_colour Single colour for highlighted atoms (default \code{"pink"}).
@@ -58,7 +59,7 @@
 #' \code{rgl::segments3d()}. Labels are drawn with \code{rgl::texts3d()} and use
 #' depth settings that keep them visible over spheres.
 #'
-#' @return (Invisibly) a list:
+#' @return If `widget = TRUE` returns a htmlwidget object. Otherwise (invisibly) returns a list:
 #' \describe{
 #'   \item{atoms}{Integer vector of rgl object IDs for atom spheres (or \code{NULL} if not drawn).}
 #'   \item{bonds}{Integer vector of rgl object IDs for bond segments.}
@@ -112,6 +113,7 @@ plot_molecule <- function(
     anchor_colour = "pink",
     show_symmetries = TRUE,
     colour_map_symmetries = pal_symmetries(),
+    widget = TRUE,
     add_light = TRUE
 ) {
   # ---- Validate inputs -------------------------------------------------------
@@ -257,6 +259,9 @@ plot_molecule <- function(
     )
   }
 
+  if(widget){
+    return(rgl::rglwidget())
+  }
   # ---- Return IDs for downstream updates ------------------------------------
   rgl_ids <- list(atoms = sphere_ids, bonds = bond_ids)
   invisible(rgl_ids)

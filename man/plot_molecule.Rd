@@ -37,6 +37,7 @@ plot_molecule(
   anchor_colour = "pink",
   show_symmetries = TRUE,
   colour_map_symmetries = pal_symmetries(),
+  widget = TRUE,
   add_light = TRUE
 )
 }
@@ -119,17 +120,19 @@ to set the camera/view.}
 
 \item{colour_map_symmetries}{Named character vector mapping symmetry axis order (values) to colours (names). See \code{\link[=pal_symmetries]{pal_symmetries()}} for an example.}
 
+\item{widget}{Should this function return a htmlwidget object? (i.e. call \code{rgl::rglwidget()} at the end of plot creation)}
+
 \item{add_light}{should a light source be added?}
 }
 \value{
-(Invisibly) a list:
+If \code{widget = TRUE} returns a htmlwidget object. Otherwise (invisibly) returns a list:
 \describe{
 \item{atoms}{Integer vector of rgl object IDs for atom spheres (or \code{NULL} if not drawn).}
 \item{bonds}{Integer vector of rgl object IDs for bond segments.}
 }
 }
 \description{
-Renders a ball–stick view of a \code{Molecule3D} using \strong{rgl}. Atoms are drawn
+Renders a ball and stick representation of a \code{Molecule3D} using \strong{rgl}. Atoms are drawn
 as spheres, bonds as line segments, and optional labels can be shown with
 different display modes via \code{label_mode}.
 }
