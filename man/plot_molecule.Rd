@@ -38,6 +38,7 @@ plot_molecule(
   show_symmetries = TRUE,
   colour_map_symmetries = pal_symmetries(),
   widget = TRUE,
+  ...,
   add_light = TRUE
 )
 }
@@ -121,6 +122,38 @@ to set the camera/view.}
 \item{colour_map_symmetries}{Named character vector mapping symmetry axis order (values) to colours (names). See \code{\link[=pal_symmetries]{pal_symmetries()}} for an example.}
 
 \item{widget}{Should this function return a htmlwidget object? (i.e. call \code{rgl::rglwidget()} at the end of plot creation)}
+
+\item{...}{
+  Arguments passed on to \code{\link[rgl:rglwidget]{rgl::rglwidget}}
+  \describe{
+    \item{\code{x}}{
+An RGL scene produced by the \code{\link[rgl]{scene3d}} function.
+}
+    \item{\code{width,height}}{
+The width and height of the display in pixels.
+}
+    \item{\code{controllers}}{Names of \code{\link[rgl]{playwidget}} objects
+associated with this scene, or objects (typically piped in).  See Details below.
+}
+    \item{\code{snapshot,webgl}}{Control of mode of display of scene.
+  See Details below.
+}
+    \item{\code{elementId}}{The id to use on the HTML \code{div}
+component that will hold the scene.
+}
+    \item{\code{reuse}}{Ignored.  See Details below.
+}
+    \item{\code{webGLoptions}}{A list of options to pass
+  to WebGL when the drawing context is created.  See the Details below.}
+    \item{\code{shared}}{An object produced by \code{\link[rgl]{rglShared}}, or a list of such objects.}
+    \item{\code{minimal}}{Should attributes be skipped if they currently have
+  no effect?  See \code{\link[rgl]{scene3d}}.}
+    \item{\code{shinyBrush}}{The name of a Shiny \code{input} element
+  to receive information about mouse selections.}
+    \item{\code{altText}}{Text to include for screen-readers or browsers
+  that don't handle WebGL.  See Details below.}
+    \item{\code{oldConvertBBox,fastTransparency}}{See Details below.}
+  }}
 
 \item{add_light}{should a light source be added?}
 }

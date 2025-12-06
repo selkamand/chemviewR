@@ -52,7 +52,7 @@
 #' @param add_light should a light source be added?
 #' @param show_symmetries draw lines representing symmetry axes
 #' @param colour_map_symmetries Named character vector mapping symmetry axis order (values) to colours (names). See [pal_symmetries()] for an example.
-#'
+#' @inheritDotParams rgl::rglwidget
 #' @details
 #' Bonds are expanded with atom coordinates using \code{enrich_bonds_with_xyz_position()}
 #' and interleaved by \code{to_interleaved()} into alternating start/end rows for
@@ -114,6 +114,7 @@ plot_molecule <- function(
     show_symmetries = TRUE,
     colour_map_symmetries = pal_symmetries(),
     widget = TRUE,
+    ...,
     add_light = TRUE
 ) {
   # ---- Validate inputs -------------------------------------------------------
@@ -260,7 +261,7 @@ plot_molecule <- function(
   }
 
   if(widget){
-    return(rgl::rglwidget())
+    return(rgl::rglwidget(...))
   }
   # ---- Return IDs for downstream updates ------------------------------------
   rgl_ids <- list(atoms = sphere_ids, bonds = bond_ids)
