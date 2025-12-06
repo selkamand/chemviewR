@@ -44,7 +44,6 @@ aspirin = structures::read_mol2(aspirin_file)
 
 # Plot molecule
 plot_molecule(aspirin)
-rglwidget()
 ```
 
 ## Visualising Multiple Atoms
@@ -55,7 +54,7 @@ rglwidget()
 benzene_file = system.file(package = "chemviewR", "benzene.mol2")
 caffeine_file = system.file(package = "chemviewR", "caffeine.mol2")
 sunflower_file = system.file(package = "chemviewR", "sunflower.mol2")
-fe_tripod = system.file(package = "chemviewR", "fe_tripod.mol2")
+fe_tripod_file = system.file(package = "chemviewR", "fe_tripod.mol2")
 aspirin_file = system.file(package = "chemviewR", "aspirin.mol2")
 basketine_file = system.file(package = "chemviewR", "basketane.mol2")
 cubane_file = system.file(package = "chemviewR", "cubane.mol2")
@@ -76,21 +75,21 @@ fullerene = read_mol2(fullerene_file)
 open3d()
 layout3d(matrix(1:16, 4,4), heights=c(1,3,1,3))
 text3d(0,0,0,"Benzene"); next3d()
-plot_molecule(benzene, clear_scene = FALSE); next3d()
+plot_molecule(benzene, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Caffeine"); next3d()
-plot_molecule(caffeine, clear_scene = FALSE); next3d()
+plot_molecule(caffeine, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Sunflower"); next3d()
-plot_molecule(sunflower, clear_scene = FALSE); next3d()
+plot_molecule(sunflower, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Iron tripod"); next3d()
-plot_molecule(fe_tripod, clear_scene = FALSE); next3d()
+plot_molecule(fe_tripod, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Aspirin"); next3d()
-plot_molecule(aspirin, clear_scene = FALSE); next3d()
+plot_molecule(aspirin, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Basketine"); next3d()
-plot_molecule(basketine, clear_scene = FALSE); next3d()
+plot_molecule(basketine, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Cubane"); next3d()
-plot_molecule(cubane, clear_scene = FALSE); next3d()
+plot_molecule(cubane, clear_scene = FALSE, widget = FALSE); next3d()
 text3d(0,0,0,"Fullerene"); next3d()
-plot_molecule(fullerene, clear_scene = FALSE);
+plot_molecule(fullerene, clear_scene = FALSE, widget = FALSE);
 rglwidget()
 ```
 
@@ -125,6 +124,5 @@ fe_tripod <- fe_tripod |>
 
 # Plot molecule with C3 axis (shown in purple)
 plot_molecule(fe_tripod)
-rglwidget()
 ```
 
