@@ -31,7 +31,7 @@ You can install the development version of chemviewR like so:
 if (!require("remotes"))
     install.packages("remotes")
 
-remotes::install_github("selkamand/chemviewR")
+remotes::install_github("selkamand/chemviewR", dependencies = TRUE)
 ```
 
 ## Visualise Molecules
