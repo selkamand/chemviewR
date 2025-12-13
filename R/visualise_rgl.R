@@ -40,6 +40,12 @@
 #' @param atom_radius Sphere radius.
 #' @param atom_shininess Sphere shininess; forced to \code{0} when
 #'   \code{label_mode == "transparent"} for a flat look.
+#' @param expand Numeric scalar giving the amount of padding (in the same coordinate units
+#' as `molecule@atoms$x/y/z`) added around the molecule when computing the scene bounds.
+#' This is used to draw an invisible bounding box that stretches the rgl scene so
+#' unbounded primitives (e.g., `rgl::abclines3d()` symmetry axes) are not clipped or
+#' auto-zoomed away. Set `expand = 0` to disable padding; increase it if long/infinite
+#' lines appear truncated.
 #' @param bond_alpha Opacity of bond segments.
 #' @param grid Logical; draw orthogonal reference grids.
 #' @param grid_n Integer; number of grid lines per axis when \code{grid = TRUE}.
@@ -104,6 +110,7 @@ plot_molecule <- function(
     atom_radius = 0.3,
     atom_shininess = 100,
     bond_alpha = 1,
+    expand = atom_radius*2 + 3, # The size to add as padding around molecule (helps ensure infinite elements like symmetry axis lines are always visible)
     grid = FALSE,
     grid_n = 10,
     aspect = c(1, 1, 1),
@@ -119,6 +126,7 @@ plot_molecule <- function(
 ) {
   # ---- Validate inputs -------------------------------------------------------
   assertions::assert_class(molecule, class = "structures::Molecule3D")
+  assertions::assert_number(expand)
   atom_colour_type <- rlang::arg_match(atom_colour_type)
   label_mode <- rlang::arg_match(label_mode)
   label <- rlang::arg_match(label)
@@ -246,7 +254,31 @@ plot_molecule <- function(
     rgl::wire3d(shp, lit = FALSE)
   }
 
-  # Drawr Symmetry lines
+  # Draw invisible box around molecule (expanding by `expand` units in every direction) to ensure infinite elements (e.g. symmetry axes)
+  # are clearly visible
+
+  if(expand != 0){
+    xmax = max(atoms_enriched$x, na.rm = TRUE) + expand
+    ymax = max(atoms_enriched$y, na.rm = TRUE) + expand
+    zmax = max(atoms_enriched$z, na.rm = TRUE) + expand
+    xmin = min(atoms_enriched$x, na.rm = TRUE) - expand
+    ymin = min(atoms_enriched$y, na.rm = TRUE) - expand
+    zmin = min(atoms_enriched$z, na.rm = TRUE) - expand
+
+    add_box_from_bounds(
+      xmax = xmax,
+      ymax = ymax,
+      zmax = zmax,
+      xmin = xmin,
+      ymin = ymin,
+      zmin = zmin,
+      color = "red",
+      lit = FALSE,
+      alpha = 0
+    )
+  }
+
+  # Draw Symmetry lines
   if(show_symmetries == TRUE){
 
     # Proper Rotation Axes
@@ -306,6 +338,10 @@ add_plane <- function(normal, offset=0, color="pink", lit=FALSE, alpha = 0.5, sh
   rgl::planes3d(normal, d = offset, p1 = normal, lit = lit, color = color, alpha = alpha)
 }
 
+# add_invisible_points_to_stretch_bounds <- functions(xmax, xmin, ){
+#
+#   rgl::points3d(x = p[1], y = p[2], z = p[3], lit = FALSE, alpha = 0)
+# }
 
 #' Add a plane defined by position and normal
 #'
@@ -326,7 +362,42 @@ add_plane_by_position_and_normal <- function(plane_normal, plane_position){
   # rgl::spheres3d(x = plane_position, lit=FALSE, color = "purple", radius=0.1)
 }
 
+# Add a rectangular prism wireframe based on bounds.
+add_box_from_bounds <- function(xmin, ymin, zmin, xmax, ymax, zmax, color="red", lit=FALSE, alpha = 0, ...){
+  verts <- rbind(
+    c(xmin,ymin,zmin),
+    c(xmax,ymin,zmin),
+    c(xmax,ymax,zmin),
+    c(xmin,ymax,zmin),
+    c(xmin,ymin,zmax),
+    c(xmax,ymin,zmax),
+    c(xmax,ymax,zmax),
+    c(xmin,ymax,zmax)
+  )
 
+  # Faces defined by vertex indices (1-based)
+  quads <- rbind(
+    c(1,2,3,4),
+    c(5,6,7,8),
+    c(1,2,6,5),
+    c(2,3,7,6),
+    c(3,4,8,7),
+    c(4,1,5,8)
+  )
+
+  box_mesh <- rgl::mesh3d(
+    vertices = t(verts),
+    quads    = t(quads),
+
+  )
+  rgl::wire3d(
+    box_mesh,
+    color = color,
+    lit=lit,
+    alpha = alpha,
+    ...
+  )
+}
 
 compute_offset_for_plane_by_position <- function(plane_normal, target){
   # -sqrt(sum(target^2))
@@ -338,6 +409,7 @@ translate_position_in_direction <- function(position, direction, magnitude){
   translation_vector = normalise(direction) * as.numeric(magnitude)
   position + translation_vector
 }
+
 
 pad_limits <- function(v, factor = 2, extra = 0) {
   r <- range(v); c <- mean(r); h <- diff(r)/2

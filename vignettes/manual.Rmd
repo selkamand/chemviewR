@@ -126,3 +126,14 @@ fe_tripod <- fe_tripod |>
 plot_molecule(fe_tripod)
 ```
 
+
+```{r}
+benzene_file = system.file(package = "chemviewR", "benzene.mol2"); 
+benzene <- read_mol2(benzene_file); 
+benzene <- add_symmetry_element_to_molecule(benzene, ProperRotationAxis(posA = c(0, 0, 0), posB = c(0, 0, 1), n = 6))
+
+plot_molecule(benzene)
+```
+
+
+

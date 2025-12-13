@@ -28,6 +28,7 @@ plot_molecule(
   atom_radius = 0.3,
   atom_shininess = 100,
   bond_alpha = 1,
+  expand = atom_radius * 2 + 3,
   grid = FALSE,
   grid_n = 10,
   aspect = c(1, 1, 1),
@@ -101,6 +102,13 @@ colour (\code{..colour}).}
 \code{label_mode == "transparent"} for a flat look.}
 
 \item{bond_alpha}{Opacity of bond segments.}
+
+\item{expand}{Numeric scalar giving the amount of padding (in the same coordinate units
+as \code{molecule@atoms$x/y/z}) added around the molecule when computing the scene bounds.
+This is used to draw an invisible bounding box that stretches the rgl scene so
+unbounded primitives (e.g., \code{rgl::abclines3d()} symmetry axes) are not clipped or
+auto-zoomed away. Set \code{expand = 0} to disable padding; increase it if long/infinite
+lines appear truncated.}
 
 \item{grid}{Logical; draw orthogonal reference grids.}
 
