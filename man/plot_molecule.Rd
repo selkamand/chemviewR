@@ -24,7 +24,7 @@ plot_molecule(
   label_colour = "#F0F8E6",
   label_colour_bonds = "yellow",
   atom_alpha = 1,
-  atom_alpha_when_labelled = 0.1,
+  atom_alpha_when_labelled = 0.4,
   atom_radius = 0.3,
   atom_shininess = 100,
   bond_alpha = 1,
@@ -98,8 +98,7 @@ colour (\code{..colour}).}
 
 \item{atom_radius}{Sphere radius.}
 
-\item{atom_shininess}{Sphere shininess; forced to \code{0} when
-\code{label_mode == "transparent"} for a flat look.}
+\item{atom_shininess}{Sphere shininess;}
 
 \item{bond_alpha}{Opacity of bond segments.}
 
@@ -186,7 +185,7 @@ depth settings that keep them visible over spheres.
 \examples{
 \dontrun{
 mol <- structures::read_mol2(system.file(package = "chemviewR", "benzene.mol2"))
-plot_molecule(mol, axes = TRUE, grid = TRUE)
+plot_molecule(mol)
 
 # Labels only
 plot_molecule(mol, label_mode = "no_atoms", label = "elena")

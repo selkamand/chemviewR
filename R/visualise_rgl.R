@@ -38,8 +38,7 @@
 #' @param atom_alpha Sphere opacity when \code{label_mode != "transparent"}.
 #' @param atom_alpha_when_labelled Sphere opacity when \code{label_mode == "transparent"}.
 #' @param atom_radius Sphere radius.
-#' @param atom_shininess Sphere shininess; forced to \code{0} when
-#'   \code{label_mode == "transparent"} for a flat look.
+#' @param atom_shininess Sphere shininess;
 #' @param expand Numeric scalar giving the amount of padding (in the same coordinate units
 #' as `molecule@atoms$x/y/z`) added around the molecule when computing the scene bounds.
 #' This is used to draw an invisible bounding box that stretches the rgl scene so
@@ -74,7 +73,7 @@
 #' @examples
 #' \dontrun{
 #' mol <- structures::read_mol2(system.file(package = "chemviewR", "benzene.mol2"))
-#' plot_molecule(mol, axes = TRUE, grid = TRUE)
+#' plot_molecule(mol)
 #'
 #' # Labels only
 #' plot_molecule(mol, label_mode = "no_atoms", label = "elena")
@@ -106,7 +105,7 @@ plot_molecule <- function(
     label_colour = "#F0F8E6", # If null will inherit colour from atom_colour_type/colour_map_atom
     label_colour_bonds = "yellow",
     atom_alpha = 1,
-    atom_alpha_when_labelled = 0.1,
+    atom_alpha_when_labelled = 0.4,
     atom_radius = 0.3,
     atom_shininess = 100,
     bond_alpha = 1,
@@ -167,10 +166,9 @@ plot_molecule <- function(
   # ---- Draw atoms (or not), depending on label_mode --------------------------
   # - "none":        draw opaque (or user-specified) atoms only
   # - "no_atoms":    skip spheres, labels only
-  # - "transparent": draw spheres with reduced alpha and zero shininess
+  # - "transparent": draw spheres with reduced alpha
   if (label_mode != "no_atoms") {
     alpha <- if (label_mode == "transparent") atom_alpha_when_labelled else atom_alpha
-    shininess <- if (label_mode == "transparent") 0 else atom_shininess
 
     # Spheres are drawn in one call for efficiency.
     sphere_ids <- with(
@@ -180,7 +178,7 @@ plot_molecule <- function(
         color = ..colour,
         radius = atom_radius,
         lit = TRUE,
-        shininess = shininess,
+        shininess = atom_shininess,
         alpha = alpha
       )
     )
