@@ -298,6 +298,39 @@ plot_molecule <- function(
   invisible(rgl_ids)
 }
 
+#' Plot molecule and its labels as two side by side linked plots
+#'
+#' @param molecule a [structures::Molecule3D()] object.
+#' @param label_mode label mode of the second plot.
+#' @param label what values to use as labels the second plot.
+#' @param widget render as rglwidget?
+#'
+#' @returns a HTMLwidget if widget = TRUE. Otherwise invisibly returns NULL
+#' @export
+#'
+plot_molecule_alongside_labelled_version <- function(molecule, label_mode = c("no_atoms", "transparent"), label = c("elena_eleno", "element", "elena", "eleno"), widget = TRUE){
+
+  # Assertions
+  label_mode <- rlang::arg_match(label_mode)
+  label <- rlang::arg_match(label)
+
+  # Plot Molecules
+  rgl::open3d()
+  rgl::mfrow3d(nr = 1L, nc = 2L,byrow = TRUE, sharedMouse = TRUE);
+  # Plot first molecule
+  plot_molecule(molecule, clear_scene = FALSE, widget = FALSE);
+  rgl::next3d()
+  # Plot second molecule
+  plot_molecule(molecule, label_mode = label_mode, label = label, clear_scene = FALSE, widget = FALSE);
+
+  # Return htmlwidget
+  if(widget) {
+    return(rgl::rglwidget())
+  }
+
+  return(invisible(NULL))
+
+}
 
 
 #' Add a plane and optional normal arrows to an rgl scene
